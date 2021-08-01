@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>File Upload UI Design</title>
+	<link rel="stylesheet" href={{ url_for('static',filename='styles/styles.css') }}>
+</head>
+<body>
+	<div class="header">
+		<h1>Medical Project</h1>
+	</div>
+	<div class="wrapper">
+		<div class="title">
+			TRANSCRIPTION
+		</div>
+		<form action = "/" method = "GET"
+			  enctype = "multipart/form-data">
+			<div class="choose_file">
+				<label for="">
+					<textarea id="transcript-area" name="transcript-area" rows="4" cols="60">
+Speaker-1 : Hello!
+Speaker-2 : Hello there!
+					</textarea>
+					<input type="submit" class="btn" value="Go Back">
+				</label>
+
+			</div>
+		</form>
+	</div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+*{
+	font-family: 'Montserrat', sans-serif;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body{
+	background: #8178d3;
+	color: #63686e;
+}
+
+.header{
+	position: absolute;
+	top: 30%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	background: #8178d3;
+}
+
+h1{
+	color: #fff;
+	font-size: 50px;
+}
+textarea{
+	border: none;
+	text-align: left;
+}
+.wrapper{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	width: 500px;
+	background: #fff;
+}
+
+.title{
+	background: #f3f4f8;
+	padding: 15px;
+	font-size: 18px;
+	text-align: center;
+	text-transform: uppercase;
+	letter-spacing: 3px;
+}
+
+.choose_file label{
+	display: block;
+	border: 2px dashed #8178d3;
+	padding: 15px;
+	width: calc(100% - 20px);
+	margin: 10px;
+	text-align: center;
+	cursor: pointer;
+}
+
+.choose_file label:hover span{
+	text-decoration: underline;
+}
+
+.btn {
+	display: inline-block;
+	width: 140px;
+	height: 40px;
+	background: darkmagenta;
+	color: #fff;
+	border-radius: 3px;
+	border: 0;
+	box-shadow: 0 3px 0 0 hotpink;
+	transition: all 0.3s ease-in-out;
+	font-size: 14px;
+}
+
+.btn:hover {
+	background: rebeccapurple;
+	box-shadow: 0 3px 0 0 deeppink;
+	cursor: pointer;
+}
+
+.choose::-webkit-file-upload-button {
+	position: relative;
+	text-align: right;
+	-moz-opacity:0 ;
+	filter:alpha(opacity: 0);
+	opacity: 0;
+	z-index: 2;
+}
+
+.choose::-webkit-file-upload-button:hover {
+	background: rebeccapurple;
+	cursor: pointer;
+}

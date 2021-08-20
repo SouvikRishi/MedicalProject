@@ -14,7 +14,6 @@ import boto3
 import botocore
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 UPLOAD_FOLDER = "uploads"
 BUCKET = "medicalapplicationbucket"
 
@@ -51,12 +50,14 @@ def download(filename):
         output = download_file(filename, BUCKET)
         contents = check()  
         # check() - need to update
+        print(contents)
         return render_template('result.html', contents=contents)
 
 def check():
     transcribe_client = boto3.client('transcribe')
     file_uri = 's3://medicalapplicationbucket/New Recording 11.wav'
-    transcribe_file('Test-job', file_uri, transcribe_client)
+    content = transcribe_file('Test-job', file_uri, transcribe_client)
+    return content
 
 def transcribe_file(job_name, file_uri, transcribe_client):
     transcribe_client.start_medical_transcription_job(
@@ -74,7 +75,7 @@ def transcribe_file(job_name, file_uri, transcribe_client):
         Specialty='PRIMARYCARE',
         Type='CONVERSATION'
     )
-
+    filename = ""
     max_tries = 60
     while max_tries > 0:
         max_tries -= 1
@@ -86,10 +87,17 @@ def transcribe_file(job_name, file_uri, transcribe_client):
                 print(
                     f"Download the transcript from\n"
                     f"\t{job['MedicalTranscriptionJob']['Transcript']['TranscriptFileUri']}.")
+                filename = job['MedicalTranscriptionJob']['Transcript']['TranscriptFileUri']
             break
         else:
             print(f"Waiting for {job_name}. Current status is {job_status}.")
         time.sleep(10)
+    
+    delete_job = transcribe_client.delete_medical_transcription_job(MedicalTranscriptionJobName=job_name)
+    print("job delete status", delete_job)
+    print("Output filename - ",filename)
+    
+    return filename
 
 
 if __name__ == '__main__':

@@ -1,10 +1,4 @@
-[![HitCount](http://hits.dwyl.io/ro6ley/flask-drive.svg)](http://hits.dwyl.io/ro6ley/flask-drive)
-
-# FlaskDrive 
-
-This repository contains the code for this [blogpost](https://stackabuse.com/file-management-with-aws-s3-python-and-flask/) on [StackAbuse](https://stackabuse.com/).
-
-## Getting Started
+# Medical Application 
 
 ### Prerequisites
 

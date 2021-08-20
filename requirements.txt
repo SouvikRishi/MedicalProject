@@ -1,8 +1,8 @@
 -i https://pypi.org/simple/
-boto3
-botocore
-click
-docutils
+boto3==1.18.25
+botocore==1.21.25
+click==8.0.1
+docutils==0.17.1
 flask
 itsdangerous
 jinja2

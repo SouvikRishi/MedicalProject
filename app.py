@@ -50,6 +50,7 @@ def download(filename):
     if request.method == 'GET':
         output = download_file(filename, BUCKET)
         contents = check()  
+        # check() - need to update
         return render_template('result.html', contents=contents)
 
 def check():

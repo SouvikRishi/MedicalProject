@@ -1,0 +1,14 @@
+-i https://pypi.org/simple/
+boto3
+botocore
+click
+docutils
+flask
+itsdangerous
+jinja2
+jmespath
+markupsafe
+s3transfer
+six
+urllib3 ; python_version >= '3.4'
+werkzeug

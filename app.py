@@ -17,7 +17,7 @@ import botocore
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
-BUCKET = "medicalapplicationbucket"
+BUCKET = "medicalappuserbucket"
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 
@@ -64,7 +64,7 @@ def download(filename):
 
 def check(filename):
     transcribe_client = boto3.client('transcribe')
-    file_uri = 's3://medicalapplicationbucket/'+str(filename)
+    file_uri = 's3://'+BUCKET+'/'+str(filename)
     content = transcribe_file('Test-job', file_uri, transcribe_client)
     return content
 
@@ -74,7 +74,7 @@ def transcribe_file(job_name, file_uri, transcribe_client):
         Media={'MediaFileUri': file_uri},
         MediaFormat='wav',
         LanguageCode='en-US',
-        OutputBucketName='medicalapplicationbucket'
+        OutputBucketName=BUCKET
     )
 
     max_tries = 60

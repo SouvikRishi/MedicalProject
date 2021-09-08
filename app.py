@@ -23,7 +23,7 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 @app.route('/')
 def entry_point():
-    return 'Hello World!'
+    return render_template('index.html')
 
 
 @app.route("/storage")

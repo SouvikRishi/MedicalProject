@@ -14,6 +14,8 @@ import time
 import json
 import boto3
 import botocore
+import nltk
+nltk.download('punkt')
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
@@ -60,7 +62,7 @@ def download(filename):
         json_content = json.loads(file_content)
         transcribe_content = json_content["results"]["transcripts"][0]['transcript']
         print(transcribe_content)
-        return render_template('result.html', contents=transcribe_content)
+        return render_template('result.html', contents=nltk.tokenize.sent_tokenize(transcribe_content))
 
 def check(filename):
     transcribe_client = boto3.client('transcribe')

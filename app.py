@@ -142,5 +142,6 @@ def transcribe_file(job_name, file_uri, transcribe_client):
 
 
 if __name__ == '__main__':
+    # Adding test comment
     app.run(debug=True)
 

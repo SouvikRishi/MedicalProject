@@ -36,7 +36,12 @@ def storage():
 @app.route("/transcribe")
 def transcribe():
     contents = list_files(BUCKET)
-    return render_template('transcribe.html', contents=contents)
+    print(contents)
+    file_list =[]
+    for i in contents:
+        if (".wav" in i['Key']) or (".m4a" in i['Key']):
+            file_list.append(i)
+    return render_template('transcribe.html', contents=file_list)
 
 
 @app.route("/upload", methods=['POST'])

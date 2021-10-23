@@ -11582,7 +11582,6 @@ body {
 @media (min-width: 992px) {
   .masthead {
     height: 100vh;
-    padding: 0;
   }
   .masthead h1, .masthead .h1 {
     font-size: 4.5rem;
@@ -11709,4 +11708,7 @@ ul {
   color:#fff;
   margin-top: 1rem;
   text-align:left;
+}
+#myDIV{
+  display: none;
 }

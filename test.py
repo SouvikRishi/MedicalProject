@@ -58,4 +58,3 @@ print('MEDICAL_CONDITION')
 print(medical_condition)
 print('MEDICATION')
 print(medication)
-

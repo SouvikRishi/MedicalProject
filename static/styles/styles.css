@@ -1967,14 +1967,15 @@ progress {
   --bs-table-striped-bg: rgba(0, 0, 0, 0.05);
   --bs-table-active-color: #212529;
   --bs-table-active-bg: rgba(0, 0, 0, 0.1);
-  --bs-table-hover-color: #212529;
+  /*--bs-table-hover-color: #212529;*/
   --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
   width: 100%;
   margin-bottom: 1rem;
-  color: #212529;
+  /*color: #212529;*/
   vertical-align: top;
   border-color: #dee2e6;
 }
+
 .table > :not(caption) > * > * {
   padding: 0.5rem 0.5rem;
   background-color: var(--bs-table-bg);
@@ -6004,7 +6005,7 @@ textarea.form-control-lg {
   border-width: 0.4rem 0 0.4rem 0.4rem;
   border-left-color: #000;
 }
-
+/*
 .tooltip-inner {
   max-width: 200px;
   padding: 0.25rem 0.5rem;
@@ -6013,7 +6014,7 @@ textarea.form-control-lg {
   background-color: #000;
   border-radius: 0.25rem;
 }
-
+*/
 .popover {
   position: absolute;
   top: 0;
@@ -11581,7 +11582,7 @@ body {
 }
 @media (min-width: 992px) {
   .masthead {
-    height: 100vh;
+    /*height: 100vh;*/
   }
   .masthead h1, .masthead .h1 {
     font-size: 4.5rem;

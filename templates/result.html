@@ -12,9 +12,100 @@
     <!-- Google fonts-->
     <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="{{ url_for('static',filename='styles/styles.css') }}" rel="stylesheet" />
+
   </head>
+  <style>
+    .table {
+        color: #fff !important;
+    }
+    .table-wrapper {
+        width: 700px;
+        margin: 30px auto;
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    }
+    .table-title {
+        padding-bottom: 10px;
+        margin: 0 0 10px;
+    }
+    .table-title h2 {
+        margin: 6px 0 0;
+        font-size: 22px;
+    }
+    .table-title .add-new {
+        float: right;
+        height: 30px;
+        font-weight: bold;
+        font-size: 12px;
+        text-shadow: none;
+        min-width: 100px;
+        border-radius: 50px;
+        line-height: 13px;
+    }
+    .table-title .add-new i {
+        margin-right: 4px;
+    }
+    table.table {
+        table-layout: fixed;
+    }
+    table.table tr th, table.table tr td {
+        border-color: #e9e9e9;
+    }
+    table.table th i {
+        font-size: 13px;
+        margin: 0 5px;
+        cursor: pointer;
+    }
+    table.table th:last-child {
+        width: 100px;
+    }
+    table.table td a {
+        cursor: pointer;
+        display: inline-block;
+        margin: 0 5px;
+        min-width: 24px;
+    }
+    table.table td a.add {
+        color: #27C46B;
+    }
+    table.table td a.edit {
+        color: #FFC107;
+    }
+    table.table td a.delete {
+        color: #E34724;
+    }
+    table.table td i {
+        font-size: 19px;
+    }
+    table.table td a.add i {
+        font-size: 24px;
+        margin-right: -1px;
+        position: relative;
+        top: 3px;
+    }
+    table.table .form-control {
+        height: 32px;
+        line-height: 32px;
+        box-shadow: none;
+        border-radius: 2px;
+    }
+    table.table .form-control.error {
+        border-color: #f50000;
+    }
+    table.table td .add {
+        display: none;
+    }
+    </style>
+
   
   <body>
     <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
@@ -35,17 +126,108 @@
   </nav>
   <header class="masthead">
     <div class="container">
-        <div class="d-flex">
+        <div>
             <div>
+                <h3 style="color:#fff;"><b>Patient Information</b></h3>
+                <div class="form-group">
+                  <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Name</span>
+                      </div>
+                      <input type="text" class="form-control" placeholder="First Name">
+                      <input type="text" class="form-control" placeholder="Last Name">
+                  </div>
+                  <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Phone</span>
+                      </div>
+                      <input type="text" class="form-control" placeholder="Phone">
+                  </div>
+                  <div class="input-group mb-4">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Age</span>
+                      </div>
+                      <input type="text" class="form-control" placeholder="Age">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Gender</span>
+                      </div>
+                      <input type="text" class="form-control" placeholder="Gender">
+                  </div>
+                  <br/>
+                  <label for="comment"><h3><b>Transcription:</b></h3></label>
+                  <textarea class="form-control" rows="10" id="comment">
+{% for para in contents %}
+{{ para }}{% endfor %}
+                  </textarea>
+                </div>
                 <div class="output">
-                  {% for para in contents %}
-                    <p>{{ para }}</p>
-                  {% endfor %}
-                  <button onclick="myFunction()" id="myButton" value="Show Comprehension">Show Comprehension</button>
+                  <button class="btn btn-primary" onclick="myFunction()" id="myButton" value="Show Comprehension">Show Comprehension</button>
                   <div id="myDIV">
-                    {% for res in comprehend %}
-                     <p>{{ res }}</p>
-                    {% endfor %}
+                     <div class = "medical-condition">
+                          <div class="table-title">
+                            <div class="row">
+                                <div class="col-sm-8"><h3><b>Patient Medical History</b></h3></div>
+                                <div class="col-sm-4">
+                                    <button type="button" class="btn btn-info add-new"><i class="fa fa-plus"></i> Add New</button>
+                                </div>
+                            </div>
+                          </div>
+                          <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Label</th>
+                                    <th>Extract</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key in comprehend[1].keys() %}
+                                <tr>
+                                    <td>{{key}}</td>
+                                    <td>{{",".join(comprehend[1][key])}}</td>
+                                    <td>
+                                        <a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>
+                                        <a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
+                                        <a class="delete" title="Delete"><i class="material-icons">&#xE872;</i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                     </div>
+                     <div class = "medication">
+                          <div class="table-title">
+                            <div class="row">
+                                <div class="col-sm-8"><h3><b>Medication</b></h3></div>
+                                <div class="col-sm-4">
+                                    <button type="button" class="btn btn-info add-new"><i class="fa fa-plus"></i> Add New</button>
+                                </div>
+                            </div>
+                          </div>
+                          <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Label</th>
+                                    <th>Extract</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key in comprehend[2].keys() %}
+                                <tr>
+                                    <td>{{key}}</td>
+                                    <td>{{",".join(comprehend[2][key])}}</td>
+                                    <td>
+                                        <a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>
+                                        <a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
+                                        <a class="delete" title="Delete"><i class="material-icons">&#xE872;</i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                     </div>
+
                   </div>
                 </div>
             </div>
@@ -61,5 +243,58 @@
     <script src="{{ url_for('static',filename='JS/map.js') }}"></script>
     <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+        var actions = $("table td:last-child").html();
+        // Append table with add row form on add new button click
+        $(".add-new").click(function(){
+            $(this).attr("disabled", "disabled");
+            var index = $("table tbody tr:last-child").index();
+            var row = '<tr>' +
+                '<td><input type="text" class="form-control" name="label" id="label"></td>' +
+                '<td><input type="text" class="form-control" name="extract" id="extract"></td>' +
+                '<td>' + actions + '</td>' +
+            '</tr>';
+            $("table").append(row);
+            $("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+        // Add row on add button click
+        $(document).on("click", ".add", function(){
+            var empty = false;
+            var input = $(this).parents("tr").find('input[type="text"]');
+            input.each(function(){
+                if(!$(this).val()){
+                    $(this).addClass("error");
+                    empty = true;
+                } else{
+                    $(this).removeClass("error");
+                }
+            });
+            $(this).parents("tr").find(".error").first().focus();
+            if(!empty){
+                input.each(function(){
+                    $(this).parent("td").html($(this).val());
+                });
+                $(this).parents("tr").find(".add, .edit").toggle();
+                $(".add-new").removeAttr("disabled");
+            }
+        });
+        // Edit row on edit button click
+        $(document).on("click", ".edit", function(){
+            $(this).parents("tr").find("td:not(:last-child)").each(function(){
+                $(this).html('<input type="text" class="form-control" value="' + $(this).text() + '">');
+            });
+            $(this).parents("tr").find(".add, .edit").toggle();
+            $(".add-new").attr("disabled", "disabled");
+        });
+        // Delete row on delete button click
+        $(document).on("click", ".delete", function(){
+            $(this).parents("tr").remove();
+            $(".add-new").removeAttr("disabled");
+        });
+    });
+    </script>
   </body>
 </html>

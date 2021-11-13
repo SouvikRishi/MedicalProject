@@ -52,3 +52,22 @@ window.addEventListener('DOMContentLoaded', event => {
     });
 
 });
+
+function myFunction() {
+    var x = document.getElementById("myDIV");
+    if (x.style.display === "block") {
+      x.style.display = "none";;
+    } else {
+      x.style.display = "block";
+    }
+    var btn = document.getElementById("myButton");
+
+    if (btn.value == "Show Comprehension") {
+    btn.value = "Hide Comprehension";
+    btn.innerHTML = "Hide Comprehension";
+    }
+    else {
+    btn.value = "Show Comprehension";
+    btn.innerHTML = "Show Comprehension";
+    }
+}

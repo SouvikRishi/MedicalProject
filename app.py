@@ -14,6 +14,8 @@ import time
 import json
 import boto3
 import botocore
+import nltk
+nltk.download('punkt')
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
@@ -34,7 +36,12 @@ def storage():
 @app.route("/transcribe")
 def transcribe():
     contents = list_files(BUCKET)
-    return render_template('transcribe.html', contents=contents)
+    print(contents)
+    file_list =[]
+    for i in contents:
+        if (".wav" in i['Key']) or (".m4a" in i['Key']):
+            file_list.append(i)
+    return render_template('transcribe.html', contents=file_list)
 
 
 @app.route("/upload", methods=['POST'])
@@ -59,8 +66,50 @@ def download(filename):
         file_content = content_object.get()['Body'].read().decode('utf-8')
         json_content = json.loads(file_content)
         transcribe_content = json_content["results"]["transcripts"][0]['transcript']
+        comprehend_result = comprehend(transcribe_content)
         print(transcribe_content)
-        return render_template('result.html', contents=transcribe_content)
+        return render_template('result.html', contents=nltk.tokenize.sent_tokenize(transcribe_content), comprehend = comprehend_result)
+
+def comprehend(text):
+    client = boto3.client(service_name='comprehendmedical', region_name='us-east-1')
+    result = client.detect_entities(Text= text)
+
+    health_info = dict()
+    # treatment = dict()
+    medical_condition = dict()
+    medication = dict()
+
+    entities = result['Entities'];
+
+    for entity in entities:
+        trait = ''
+        for t in entity['Traits']:
+            trait = trait + t['Name'] + '_'
+        trait = trait[:-1]
+
+        if entity['Category'] == 'PROTECTED_HEALTH_INFORMATION':
+            key = entity['Type']
+            if key in health_info.keys():
+                health_info[key].append(entity['Text'])
+            else:
+                health_info[key] = [entity['Text']]
+        
+        if entity['Category'] == 'MEDICAL_CONDITION':
+            key = trait
+            if key in medical_condition.keys():
+                medical_condition[key].append(entity['Text'])
+            else:
+                medical_condition[key] = [entity['Text']]
+
+        if entity['Category'] == 'MEDICATION':
+            key = entity['Type']
+            if key in medication.keys():
+                medication[key].append(entity['Text'])
+            else:
+                medication[key] = [entity['Text']]
+    
+    return [health_info, medical_condition, medication]
+
 
 def check(filename):
     transcribe_client = boto3.client('transcribe')

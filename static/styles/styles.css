@@ -11713,3 +11713,17 @@ ul {
 #myDIV{
   display: none;
 }
+.sound-list{
+  margin-bottom: 1rem;
+  display: list-item;
+}
+a.delete {
+  color: #E34724;
+}
+a.delete:hover {
+  cursor: pointer;
+  color: #E34724;
+}
+.material-icons{
+  padding-left: 1rem;
+}

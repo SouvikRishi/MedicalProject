@@ -48,7 +48,7 @@
                       {% for item in contents %}
                         <li class="sound-list">
                           <a href="/download/{{ item.Key }}"> {{ item.Key }} </a>
-                          <a class="delete" title="Delete" href="#"><i class="material-icons">&#xE872;</i></a>
+                          <a class="delete" title="Delete" href="/delete/{{ item.Key }}"><i class="material-icons">&#xE872;</i></a>
                         </li>
                       {% endfor %}
                     </ul>

@@ -70,6 +70,19 @@ def download(filename):
         print(transcribe_content)
         return render_template('result.html', contents=nltk.tokenize.sent_tokenize(transcribe_content), comprehend = comprehend_result)
 
+@app.route("/delete/<filename>", methods=['GET'])
+def delete(filename):
+    if request.method == 'GET':
+        delete_file_s3(filename)
+        flash('Audio File Deleted Successfully')
+        return redirect("/transcribe")
+
+def delete_file_s3(filename):
+    s3 = boto3.resource('s3')
+    # s3.delete_object(Bucket=BUCKET, Key=filename)
+    s3.Object(BUCKET, filename).delete()
+
+
 def comprehend(text):
     client = boto3.client(service_name='comprehendmedical', region_name='us-east-1')
     result = client.detect_entities(Text= text)

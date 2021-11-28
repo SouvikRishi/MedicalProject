@@ -41,17 +41,19 @@
       <header class="masthead">
         <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
             <div class="d-flex justify-content-center">
-                <div class="text-center">
+                <div>
                     <h1 class="mx-auto my-0 text-uppercase">Files in Storage</h1>
                     <h2 class="text-white-50 mx-auto mt-2 mb-5">Click on the filename to transcribe:</h2>
-                    <ul>
-                      {% for item in contents %}
-                        <li class="sound-list">
-                          <a href="/download/{{ item.Key }}"> {{ item.Key }} </a>
-                          <a class="delete" title="Delete" href="/delete/{{ item.Key }}"><i class="material-icons">&#xE872;</i></a>
-                        </li>
-                      {% endfor %}
-                    </ul>
+                      <div>
+                        <table class="trans-list" align="center">
+                          {% for item in contents %}
+                                <tr>
+                                  <td><a href="/download/{{ item.Key }}"> {{ item.Key }} </a></td>
+                                  <td><a class="delete" title="Delete" href="/delete/{{ item.Key }}"><i class="material-icons">&#xE872;</i></a></td>
+                                </tr>
+                          {% endfor %}
+                          </table>  
+                      </div>
                 </div>
             </div>
         </div>

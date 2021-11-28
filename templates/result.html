@@ -43,7 +43,7 @@
     }
     .table-title .add-new {
         float: right;
-        height: 30px;
+        /* height: 30px; */
         font-weight: bold;
         font-size: 12px;
         text-shadow: none;
@@ -71,7 +71,7 @@
     table.table td a {
         cursor: pointer;
         display: inline-block;
-        margin: 0 5px;
+        /* margin: 0 5px; */
         min-width: 24px;
     }
     table.table td a.add {
@@ -184,12 +184,22 @@
                                 {% for key in comprehend[1].keys() %}
                                 <tr>
                                     <td>{{key}}</td>
+                                    {% if key == 'SYMPTOM' %}
+                                    <td>
+                                        {% for sym in comprehend[1][key] %}
+                                        <label for="SYMPTOM"><input type="checkbox" id="SYMPTOM" name="SYMPTOM"> {{sym}} </label>
+                                        {% endfor %}
+                                        <i>Note:</i> Mark the <b>Chief Complaint</b> from the available symptoms.
+                                    </td>
+                                    {% else %}
                                     <td>{{",".join(comprehend[1][key])}}</td>
+                                    {% endif %}
                                     <td>
                                         <a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>
                                         <a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
                                         <a class="delete" title="Delete"><i class="material-icons">&#xE872;</i></a>
                                     </td>
+
                                 </tr>
                                 {% endfor %}
                             </tbody>

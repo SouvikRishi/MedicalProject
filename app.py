@@ -1,6 +1,7 @@
 from __future__ import print_function
 import requests
 import os
+from urllib.parse import urlparse
 
 from flask import Flask, render_template, request, redirect, send_file, url_for, flash, jsonify, make_response
 
@@ -62,7 +63,7 @@ def download(filename):
         # # check() - need to update
         # print(contents)
         s3 = boto3.resource('s3')
-        content_object = s3.Object(BUCKET, 'Test-job.json')
+        content_object = s3.Object(BUCKET, "medical/Test-job.json")
         file_content = content_object.get()['Body'].read().decode('utf-8')
         json_content = json.loads(file_content)
         transcribe_content = json_content["results"]["transcripts"][0]['transcript']
@@ -86,7 +87,9 @@ def delete_file_s3(filename):
 def comprehend(text):
     client = boto3.client(service_name='comprehendmedical', region_name='us-east-1')
     result = client.detect_entities(Text= text)
-
+    response = client.infer_icd10_cm(Text=text)
+    print(response)
+   
     health_info = dict()
     # treatment = dict()
     medical_condition = dict()
@@ -130,78 +133,81 @@ def check(filename):
     content = transcribe_file('Test-job', file_uri, transcribe_client)
     return content
 
+# def transcribe_file(job_name, file_uri, transcribe_client):
+#     transcribe_client.start_transcription_job(
+#         TranscriptionJobName=job_name,
+#         Media={'MediaFileUri': file_uri},
+#         MediaFormat='wav',
+#         LanguageCode='en-US',
+#         OutputBucketName=BUCKET
+#     )
+
+#     max_tries = 60
+#     while max_tries > 0:
+#         max_tries -= 1
+#         job = transcribe_client.get_transcription_job(TranscriptionJobName=job_name)
+#         job_status = job['TranscriptionJob']['TranscriptionJobStatus']
+#         if job_status in ['COMPLETED', 'FAILED']:
+#             print(f"Job {job_name} is {job_status}.")
+#             if job_status == 'COMPLETED':
+#                 print(
+#                     f"Download the transcript from\n"
+#                     f"\t{job['TranscriptionJob']['Transcript']['TranscriptFileUri']}.")
+#                 url_link = job['TranscriptionJob']['Transcript']['TranscriptFileUri']
+#             break
+#         else:
+#             print(f"Waiting for {job_name}. Current status is {job_status}.")
+#         time.sleep(10)
+#     response_data = requests.get('https://api.github.com')
+#     delete_job = transcribe_client.delete_transcription_job(TranscriptionJobName=job_name)
+#     print("job delete status", delete_job)
+
+#     data = {"response_data": response_data.json()}
+#     return data
+
 def transcribe_file(job_name, file_uri, transcribe_client):
-    transcribe_client.start_transcription_job(
-        TranscriptionJobName=job_name,
-        Media={'MediaFileUri': file_uri},
-        MediaFormat='wav',
+    transcribe_client.start_medical_transcription_job(
+        MedicalTranscriptionJobName= job_name,
         LanguageCode='en-US',
-        OutputBucketName=BUCKET
+        MediaFormat='wav',
+        Media={
+            'MediaFileUri': file_uri
+        },
+        OutputBucketName= 'medicalappuserbucket',
+        OutputKey='Test-job.json',
+        Settings= {
+            "MaxSpeakerLabels": 2,
+            "ShowSpeakerLabels": True,
+        },
+        Specialty='PRIMARYCARE',
+        Type='DICTATION'
     )
 
+    filename = ""
     max_tries = 60
     while max_tries > 0:
         max_tries -= 1
-        job = transcribe_client.get_transcription_job(TranscriptionJobName=job_name)
-        job_status = job['TranscriptionJob']['TranscriptionJobStatus']
+        job = transcribe_client.get_medical_transcription_job(MedicalTranscriptionJobName=job_name)
+        job_status = job['MedicalTranscriptionJob']['TranscriptionJobStatus']
         if job_status in ['COMPLETED', 'FAILED']:
             print(f"Job {job_name} is {job_status}.")
             if job_status == 'COMPLETED':
                 print(
                     f"Download the transcript from\n"
-                    f"\t{job['TranscriptionJob']['Transcript']['TranscriptFileUri']}.")
-                url_link = job['TranscriptionJob']['Transcript']['TranscriptFileUri']
+                    f"\t{job['MedicalTranscriptionJob']['Transcript']['TranscriptFileUri']}.")
+                filename = job['MedicalTranscriptionJob']['Transcript']['TranscriptFileUri']
             break
         else:
             print(f"Waiting for {job_name}. Current status is {job_status}.")
         time.sleep(10)
+    
     response_data = requests.get('https://api.github.com')
-    delete_job = transcribe_client.delete_transcription_job(TranscriptionJobName=job_name)
+    delete_job = transcribe_client.delete_medical_transcription_job(MedicalTranscriptionJobName=job_name)
     print("job delete status", delete_job)
-
+    print("Output filename - ",filename)
+    
     data = {"response_data": response_data.json()}
     return data
-
-# def transcribe_file(job_name, file_uri, transcribe_client):
-    # transcribe_client.start_medical_transcription_job(
-    #     MedicalTranscriptionJobName= job_name,
-    #     LanguageCode='en-US',
-    #     MediaFormat='wav',
-    #     Media={
-    #         'MediaFileUri': file_uri
-    #     },
-    #     OutputBucketName= 'medicalapplicationbucket',
-    #     Settings= {
-    #         "MaxSpeakerLabels": 2,
-    #         "ShowSpeakerLabels": True
-    #     },
-    #     Specialty='PRIMARYCARE',
-    #     Type='CONVERSATION'
-    # )
-    # filename = ""
-    # max_tries = 60
-    # while max_tries > 0:
-    #     max_tries -= 1
-    #     job = transcribe_client.get_medical_transcription_job(MedicalTranscriptionJobName=job_name)
-    #     job_status = job['MedicalTranscriptionJob']['TranscriptionJobStatus']
-    #     if job_status in ['COMPLETED', 'FAILED']:
-    #         print(f"Job {job_name} is {job_status}.")
-    #         if job_status == 'COMPLETED':
-    #             print(
-    #                 f"Download the transcript from\n"
-    #                 f"\t{job['MedicalTranscriptionJob']['Transcript']['TranscriptFileUri']}.")
-    #             filename = job['MedicalTranscriptionJob']['Transcript']['TranscriptFileUri']
-    #         break
-    #     else:
-    #         print(f"Waiting for {job_name}. Current status is {job_status}.")
-    #     time.sleep(10)
-    #
-    # delete_job = transcribe_client.delete_medical_transcription_job(MedicalTranscriptionJobName=job_name)
-    # print("job delete status", delete_job)
-    # print("Output filename - ",filename)
-    #
-    # return filename
-
 
 if __name__ == '__main__':
     # Adding test comment

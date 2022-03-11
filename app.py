@@ -16,7 +16,7 @@ import json
 import boto3
 import botocore
 import nltk
-nltk.download('punkt')
+# nltk.download('punkt')
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
@@ -87,15 +87,43 @@ def delete_file_s3(filename):
 def comprehend(text):
     client = boto3.client(service_name='comprehendmedical', region_name='us-east-1')
     result = client.detect_entities(Text= text)
-    response = client.infer_icd10_cm(Text=text)
-    print(response)
-   
+    icd_result = client.infer_icd10_cm(Text=text)
+    print(result)
+    print(icd_result)
+
+
     health_info = dict()
     # treatment = dict()
     medical_condition = dict()
     medication = dict()
 
-    entities = result['Entities'];
+    entities = result['Entities']
+
+    icd10_info = dict()
+
+    icd10_entities = icd_result['Entities']
+    for icd10_entity in icd10_entities:
+        trait = ''
+        trait_score = []
+        for t in icd10_entity['Traits']:
+            # print(t)
+            trait = trait + t['Name'] + '_'
+            # print(t['Score'])
+            trait_score = trait_score+[float("{:.3f}".format(t['Score']))]
+        trait = trait[:-1]
+        if trait == "":
+            continue
+        key = trait
+        icd10concept_list = []
+        for concept in icd10_entity['ICD10CMConcepts']:
+            icd10concept_list.append((concept['Description'], concept['Code'], concept['Score']))
+        # print(icd10concept_list)
+
+        if key in icd10_info.keys():
+            icd10_info[key].append([icd10_entity['Text'], trait_score, icd10concept_list])
+        else:
+            icd10_info[key] = [[icd10_entity['Text'], trait_score, icd10concept_list]]
+
 
     for entity in entities:
         trait = ''
@@ -123,8 +151,9 @@ def comprehend(text):
                 medication[key].append(entity['Text'])
             else:
                 medication[key] = [entity['Text']]
-    
-    return [health_info, medical_condition, medication]
+
+    print(medical_condition)
+    return [health_info, medical_condition, medication,icd10_info]
 
 
 def check(filename):

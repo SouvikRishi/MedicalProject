@@ -1,1 +1,5 @@
 .sonarlint/**
+__pycache__/
+.github
+.vscode
+venv
